@@ -19,8 +19,8 @@ module i_mem (
 	reg [31:0] memory [0:ROM_SIZE - 1]; 		// Definição da memória
 
 	// O bloco "initial" serve pra que a gente inicialize a variável <memory> com os dados do arquivo
-	initial begin 
-		$readmemh("instruction.list", memory);	// Carrega as intruções do arquivo na memória
+	initial begin  // mudar ora binario
+		$readmemb("instruction.list", memory);	// Carrega as intruções do arquivo na memória
 	end
 
 	// Atribui o dado do endereço da memória ao output, se ele estiver no range definido acima, ou zero, caso contrário

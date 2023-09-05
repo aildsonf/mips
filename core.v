@@ -17,7 +17,7 @@ module ADD_PC(
 );
 
 	always @(pc) begin
-		nextPC <= pc + 4;			// Ao receber um PC, somar 4 e atribuir ao <nextPC>
+		nextPC = pc + 4;			// Ao receber um PC, somar 4 e atribuir ao <nextPC>
 	end
 
 endmodule 
@@ -148,38 +148,34 @@ endmodule
 
 
 // Definição do Processador
-module core(
-	clock, reset, pc, nextPC, instruction, 
-	ALUOp, ALUSrc, RegDst, RegWrite, MemtoReg, MemRead, MemWrite, Branch, Jump, 
-	WriteAddr, WriteData, ReadData1, ReadData2,
-	extended_number, shift, ALU_In2, ALUCtrl, ALU_result, Zero_flag,
-	AND_result, ADD_Branch, ReadData
-);
+module core(clock, reset, pc, ALU_result, ReadData);
 	
 	//	Todos os fios são inicializados inicializados abaixo:
 	input wire clock, reset;
 	
-	output wire	[31:0] pc, nextPC;
-	output wire [31:0] instruction;
-	output wire [2:0] ALUOp;
-	output wire ALUSrc, RegDst, RegWrite, MemtoReg, MemRead, MemWrite, Branch, Jump;
-	output wire [4:0] WriteAddr;
-	output wire	[31:0] WriteData;
-	output wire [31:0] ReadData1, ReadData2;
-	output wire [31:0] extended_number;
-	output wire [31:0] shift;
-	output wire [31:0] ALU_In2;
-	output wire [31:0] ADD_Branch;
-	output wire [3:0] ALUCtrl;
+	output wire [31:0] pc;
+	wire [31:0] nextPC, instruction;
+	wire [2:0] ALUOp;
+	wire ALUSrc, RegDst, RegWrite, MemtoReg, MemRead, MemWrite, Branch, Jump;
+	wire [4:0] WriteAddr;
+	wire [31:0] WriteData;
+	wire [31:0] ReadData1, ReadData2;
+	wire [31:0] extended_number;
+	wire [31:0] shift;
+	wire [31:0] ALU_In2;
+	wire [31:0] ADD_Branch;
+	wire [3:0] ALUCtrl;
 	output wire [31:0] ALU_result;
-	output wire Zero_flag;
-	output wire AND_result;
+	wire Zero_flag;
+	wire AND_result;
 	output wire [31:0] ReadData;	
 	
 	
 	// Todos os componentes são inicializados abaixo:
 	//	Contador de Programa		
 	PC ProgramCounter(.clock(clock), .nextPC(nextPC), .pc(pc));
+	
+	ADD_PC ADD_PC(.pc(pc), .nextPC(nextPC));
 	
 	// Memória de Instrução	
 	i_mem InstructionMemory(.address(pc), .i_out(instruction));
@@ -220,8 +216,7 @@ module core(
 		.ReadData2(ReadData2)
 	);
 	
-	// Registers -> ALU	
-	//
+	/* Registers -> ALU	
 	SignExtend Sign_Extend(
 		.number(instruction[15:0]),
 		.extended_number(extended_number)
@@ -230,7 +225,7 @@ module core(
 	ShiftLeft2 Shift_Left2(
 		.offset(extended_number),
 		.shift(shift)
-	);
+	);*/
 	
 	MUX_ALUSrc MUX_ALUSrc(
 		.ALUSrc(ALUSrc),
@@ -239,12 +234,12 @@ module core(
 		.ALU_In2(ALU_In2)
 	);
 	
-	
+	/*
 	ADD_BRANCH ADD_BRANCH(
 		.nextPC(nextPC),
 		.shift(shift),
 		.branch(ADD_Branch)
-	);
+	);*/
 	
 	// Unidade de Controle da ULA
 	ula_ctrl ALUControl(
@@ -262,7 +257,7 @@ module core(
 		.Zero_flag(Zero_flag)
 	);
 	
-	// ALU -> Data Memory	
+	/* ALU -> Data Memory	
 	// AND (Branch, Zero_flag)
 	AND_CTRL_ALU AND(
 		.Branch(Branch),
@@ -275,7 +270,7 @@ module core(
 		.branch(ADD_Branch),
 		.AND_result(AND_result),
 		.nextPC(nextPC)
-	);
+	);*/
 	
 	// Memória de Dados
 	d_mem DataMemory(

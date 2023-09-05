@@ -8,7 +8,7 @@ Projeto 02 - Implementação de MIPS (subconjunto da ISA) em Verilog
 Aluno(s): Arthur Macedo, Aildson Ferreira
 */
 
-module d_mem (
+module d_mem(
 	input [31:0] Address,			// Endereço de acesso (fornecido pela ULA)
 	input [31:0] WriteData,			// Dado que será escrito na memória na posição especificada por <Address>
 	input MemWrite, MemRead,		// Sinais de controle de leitura e escrita
@@ -19,16 +19,14 @@ module d_mem (
 
 	reg [31:0] memory [0:RAM_SIZE - 1]; // Definição da memória
 
-	reg [31:0] temp_data;					// Registrador auxiliar para armazenar os dados lidos da memória
-
-	always @* begin
+	always @(posedge MemWrite or posedge MemRead) begin
 		if (MemWrite) begin
-			memory[Address] = WriteData;	//	Escreve o conteúdo de <WriteData> na posição especificada por <Address>
+			memory[Address] <= WriteData;	//	Escreve o conteúdo de <WriteData> na posição especificada por <Address>
 		end
 		
 		if (MemRead) begin
-			ReadData = memory[Address];	//	Lê o conteúdo da memória na posição especificada por <Address> e armazena em <ReadData>
-		end
+			ReadData <= memory[Address];	//	Lê o conteúdo da memória na posição especificada por <Address> e armazena em <ReadData>
+		end 
 	end
 
 endmodule
